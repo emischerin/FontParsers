@@ -81,6 +81,31 @@ class BdfChar
 };
 
 
+class BdfFontParser
+{
+    friend class BdfFont;
+    public: 
+        BdfFontParser();
+        BdfFontParser(std::string path);
+        void SetPath(std::string filepath);
+        void SetOwner(BdfFont* font_owner);
+        void AddCharToFont();
+        void ReinitTmpChar();
+        void SetTmpCharTag(std::string tag);
+        void SetTmpCharEncoding(int encoding);
+        void DumpLines(int offset,int lines_count);
+        std::vector<std::string> Split(std::string& str,char stoken);
+
+    private:
+    void ParseFont();
+        BdfFont* m_owner = nullptr;
+        BdfChar m_tmp_char;
+        std::vector<std::string> m_file_lines;
+        std::string m_file_path;
+        std::map<std::string,BaseTokenHandler*> m_token_handlers; 
+        
+};
+
 
 class BaseTokenHandler
 {
@@ -167,48 +192,48 @@ class EncodingTokenHandler : public BaseTokenHandler
 };
 
 
-class BdfFontParser
+
+
+    
+    
+        
+
+void BdfFontParser::SetPath(std::string filepath){m_file_path = filepath;}
+void BdfFontParser::SetOwner(BdfFont*font_owner) { m_owner = font_owner;}
+
+void BdfFontParser::AddCharToFont()  
 {
-    friend class BdfFont;
-    public: 
+    m_owner->m_chars[m_tmp_char.m_encoding] = m_tmp_char;
+}
+
+void BdfFontParser::ReinitTmpChar()
+{
+    m_tmp_char.m_bitmap.clear();
+}
         
+void BdfFontParser::SetTmpCharTag(std::string tag)
+{
+    m_tmp_char.m_char_tag = tag;
+}
 
-        void SetPath(std::string filepath){m_file_path = filepath;}
-        void SetOwner(BdfFont* font_owner){ m_owner = font_owner;}
+void BdfFontParser::SetTmpCharEncoding(int encoding)
+{
+    m_tmp_char.m_encoding = encoding;
+}
+    
 
-        void AddCharToFont()
-        {
-            m_owner->m_chars[m_tmp_char.m_encoding] = m_tmp_char;
-        }
+BdfFontParser::BdfFontParser(){}
+BdfFontParser::BdfFontParser(std::string path) : m_file_path(path)
+{
+    ParseFont();
+}
 
-        void ReinitTmpChar()
-        {
-            m_tmp_char.m_bitmap.clear();
-        }
-        
-        void SetTmpCharTag(std::string tag)
-        {
-            m_tmp_char.m_char_tag = tag;
-        }
+void BdfFontParser::ParseFont()
+{
+    std::ifstream f(m_file_path);
 
-        void SetTmpCharEncoding(int encoding)
-        {
-            m_tmp_char.m_encoding = encoding;
-        }
-    private:
-
-        BdfFontParser(){}
-        BdfFontParser(std::string path) : m_file_path(path)
-        {
-            ParseFont();
-        }
-
-        void ParseFont()
-        {
-            std::ifstream f(m_file_path);
-
-            if(!f.is_open()) 
-                throw std::runtime_error("File is not opened!");
+    if(!f.is_open()) 
+        throw std::runtime_error("File is not opened!");
 
             
             std::string line;
@@ -223,13 +248,14 @@ class BdfFontParser
             }
             
                 
-        }
+}
+        
 
         
 
-        void DumpLines(int offset,int lines_count)
-        {
-            std::cout << FLUSH_TERMINAL;
+void BdfFontParser::DumpLines(int offset,int lines_count)
+{
+   std::cout << FLUSH_TERMINAL;
 
             int last_index = offset+ lines_count;
             int c = offset;
@@ -239,7 +265,7 @@ class BdfFontParser
             }
         }
 
-std::vector<std::string> Split(std::string& str,char stoken)
+std::vector<std::string> BdfFontParser::Split(std::string& str,char stoken)
 {
   std::vector<std::string> result;
   std::list<char> current;
@@ -263,11 +289,8 @@ std::vector<std::string> Split(std::string& str,char stoken)
    
      return result;
 }       
-        BdfFont* m_owner = nullptr;
-        BdfChar m_tmp_char;
-        std::vector<std::string> m_file_lines;
-        std::string m_file_path;
-        std::map<std::string,BaseTokenHandler*> m_token_handlers = 
+
+std::map<std::string,BaseTokenHandler*> BdfFontParser::m_token_handlers = 
         {
             {"STARTCHAR",new StartCharTokenHandler(this)},
             {"ENCODING",new EncodingTokenHandler(this)},
@@ -275,7 +298,7 @@ std::vector<std::string> Split(std::string& str,char stoken)
             {"ENDCHAR",new EndcharTokenHandler(this)}
         };
 
-};
+
 
 
 
