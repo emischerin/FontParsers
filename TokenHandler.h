@@ -2,6 +2,9 @@
 #define TOKENHANDLER_H
 #include "BdfFontParser.h"
 
+
+
+
 class BaseTokenHandler
 {
     public:
@@ -11,7 +14,7 @@ class BaseTokenHandler
         
     virtual ~BaseTokenHandler() = default;
     protected:
-        BdfFontParser* m_owner = nullptr;
+    BdfFontParser* m_owner = nullptr;
     
 };
 
@@ -44,17 +47,10 @@ class StartCharTokenHandler : public BaseTokenHandler
 class EncodingTokenHandler : public BaseTokenHandler
 {
     public:
-        EncodingTokenHandler(BdfFontParser* owner) : BaseTokenHandler(owner){}
+        EncodingTokenHandler(BdfFontParser* owner);
 
-        void HandleToken(std::ifstream& f, std::vector<std::string>& current_line) override
-        {
-            if(current_line[0] != "ENCODING") return;
-
-            int encoding = std::stoi(current_line[1],0,10);
-            m_owner->SetTmpCharEncoding(encoding);
-
-            
-        }
+        void HandleToken(std::ifstream& f, std::vector<std::string>& current_line) override;
+      
 };
 
 

@@ -1,32 +1,18 @@
 #include "BdfFontParser.h"
+#include "TokenHandler.h"
+#include "BdfFont.h"
 
-void BdfFontParser::SetPath(std::string filepath){m_file_path = filepath;}
-void BdfFontParser::SetOwner(BdfFont*font_owner) { m_owner = font_owner;}
-
-void BdfFontParser::AddCharToFont()  
+BdfFontParser::BdfFontParser()
 {
-    m_owner->m_chars[m_tmp_char.m_encoding] = m_tmp_char;
+    m_tmp_char = new BdfChar();
+    m_token_handlers["STARTCHAR"] = new StartCharTokenHandler(this);
+    m_token_handlers["ENCODING"] = new EncodingTokenHandler(this);
+    m_token_handlers["BITMAP"] = new BitmapTokenHandler(this);
+    m_token_handlers["ENDCHAR"] = new EndcharTokenHandler(this);
 }
-
-void BdfFontParser::ReinitTmpChar()
-{
-    m_tmp_char.m_bitmap.clear();
-}
-        
-void BdfFontParser::SetTmpCharTag(std::string tag)
-{
-    m_tmp_char.m_char_tag = tag;
-}
-
-void BdfFontParser::SetTmpCharEncoding(int encoding)
-{
-    m_tmp_char.m_encoding = encoding;
-}
-    
-
-BdfFontParser::BdfFontParser(){}
 BdfFontParser::BdfFontParser(std::string path) : m_file_path(path)
 {
+    BdfFontParser();
     ParseFont();
 }
 
@@ -42,6 +28,8 @@ void BdfFontParser::ParseFont()
             while(std::getline(f,line)){
                 //m_file_lines.push_back(line);
                 std::vector<std::string> split = Split(line,' ');
+                if(split.size() < 1) continue;
+                //std::cout << split[0] << "\n";
                 auto h = m_token_handlers.find(split[0]);
                 if(h != m_token_handlers.end()){
                     h->second->HandleToken(f,split);
@@ -51,9 +39,33 @@ void BdfFontParser::ParseFont()
             
                 
 }
-        
 
+
+void BdfFontParser::SetPath(std::string filepath){m_file_path = filepath;}
+void BdfFontParser::SetOwner(BdfFont*font_owner) { m_owner = font_owner;}
+
+void BdfFontParser::AddCharToFont()  
+{
+    std::cout << m_tmp_char->m_encoding << std::endl;
+    m_owner->m_chars[m_tmp_char->m_encoding] = *m_tmp_char;
+}
+
+void BdfFontParser::ReinitTmpChar()
+{
+    m_tmp_char->m_bitmap.clear();
+}
         
+void BdfFontParser::SetTmpCharTag(std::string tag)
+{
+    m_tmp_char->m_char_tag = tag;
+}
+
+void BdfFontParser::SetTmpCharEncoding(int encoding)
+{
+    m_tmp_char->m_encoding = encoding;
+    std::cout << m_tmp_char->m_encoding << std::endl;
+}
+       
 
 void BdfFontParser::DumpLines(int offset,int lines_count)
 {
@@ -88,7 +100,7 @@ std::vector<std::string> BdfFontParser::Split(std::string& str,char stoken)
    
   
   }
-   
+//   std::cout << "SPLITTED!\n";
      return result;
 }       
 

@@ -1,6 +1,8 @@
 #include "BdfFont.h"
+#include "BdfFontParser.h"
 
-BdfChar::BdfChar(){}
+BdfChar::BdfChar()
+{}
 
 int BdfChar::GetEncoding()
 {
@@ -12,19 +14,21 @@ std::string BdfChar::GetTag()
         return m_char_tag;
 }
 
-std::list<int> BdfFont::GetBitmap()
+std::list<int> BdfChar::GetBitmap()
 {
     return m_bitmap;
 }
 
 BdfFont::BdfFont(std::string filepath)
 {
-    m_font_parser.SetPath(filepath);
-    m_font_parser.ParseFont();
+    m_font_parser = new BdfFontParser(filepath);
+    
 }
 
 void BdfFont::DumpFont()
 {
+        std::cout << "FONT SUMMARY\n";
+        std::cout << m_chars.size() << std::endl;
         for(auto i = m_chars.begin();i != m_chars.end();++i){
             std::cout << "====CHAR======" << std::endl;
             std::cout << i->second.GetTag();

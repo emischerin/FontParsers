@@ -1,15 +1,18 @@
 
 
-
 #ifndef BDFFONTPARSER_H
 #define BDFFONTPARSER_H
 #include <vector>
 #include <string>
 #include <map>
+#include <memory>
 #include <fstream>
 #include <iostream>
-#include "BdfFont.h"
-#include "TokenHandler.h"
+
+
+class BaseTokenHandler;
+class BdfFont;
+class BdfChar;
 
 class BdfFontParser
 {
@@ -28,19 +31,14 @@ class BdfFontParser
 
     private:
     void ParseFont();
-        BdfFont* m_owner = nullptr;
-        BdfChar m_tmp_char;
-        std::vector<std::string> m_file_lines;
-        std::string m_file_path;
-        const std::string FLUSH_TERMINAL = "\033[2J\033[1;1H";
+
+    BdfFont* m_owner = nullptr;
+    BdfChar* m_tmp_char = nullptr;
+    std::vector<std::string> m_file_lines;
+    std::string m_file_path;
+    const std::string FLUSH_TERMINAL = "\033[2J\033[1;1H";
+    std::map<std::string,BaseTokenHandler*> m_token_handlers;
         
-        std::map<std::string,BaseTokenHandler*> m_token_handlers =
-        {
-            {"STARTCHAR",new StartCharTokenHandler(this)},
-            {"ENCODING",new EncodingTokenHandler(this)},
-            {"BITMAP",new BitmapTokenHandler(this)},
-            {"ENDCHAR",new EndcharTokenHandler(this)}
-        }; 
         
 };
 

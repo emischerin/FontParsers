@@ -1,9 +1,9 @@
 
 #ifndef BDFFONT_H
 #define BDFFONT_H
-
-#include "BdfFontParser.h"
 #include <list>
+#include "BdfFontParser.h"
+
 
 class BdfChar
 {
@@ -34,6 +34,7 @@ class BdfFont
     BdfFont(std::string filepath);
     
 
+
     void DumpFont();
     
 
@@ -42,7 +43,7 @@ class BdfFont
     std::string m_family_name;
     int m_chars_count;
     int m_bbox_x,m_bbox_y,m_bbox_offset_x,m_bbox_offset_y;
-    BdfFontParser m_font_parser;
+    BdfFontParser* m_font_parser = nullptr;
     std::map<int,BdfChar> m_chars;
 
 

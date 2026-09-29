@@ -1,12 +1,13 @@
 #include "TokenHandler.h"
 
+
 BaseTokenHandler::BaseTokenHandler(BdfFontParser* owner) : m_owner(owner){};
 
 BitmapTokenHandler::BitmapTokenHandler(BdfFontParser* owner) : BaseTokenHandler(owner){}
 
-    void BitmapTokenHandler::HandleToken(std::ifstream& f, std::vector<std::string>& current_line) 
-    {
-        if(current_line[0] != "BITMAP") return;
+void BitmapTokenHandler::HandleToken(std::ifstream& f, std::vector<std::string>& current_line) 
+{
+    if(current_line[0] != "BITMAP") return;
 
         for(;;){
             std::getline(f,current_line[0]);
@@ -18,9 +19,7 @@ BitmapTokenHandler::BitmapTokenHandler(BdfFontParser* owner) : BaseTokenHandler(
 
             
         }
-
-        std::string junk;
-        std::getline(std::cin,junk);
+       
 }
 
 EndcharTokenHandler::EndcharTokenHandler(BdfFontParser* owner) : BaseTokenHandler(owner){}
@@ -43,7 +42,7 @@ void StartCharTokenHandler::HandleToken(std::ifstream& f, std::vector<std::strin
      m_owner->ReinitTmpChar();
      m_owner->SetTmpCharTag(current_line[1]);
 
-}
+}   
 
 EncodingTokenHandler::EncodingTokenHandler(BdfFontParser* owner) : BaseTokenHandler(owner){}
 
