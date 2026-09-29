@@ -1,7 +1,7 @@
 #ifndef TOKENHANDLER_H
 #define TOKENHANDLER_H
 #include "BdfFontParser.h"
-
+#include <list>
 
 
 
@@ -53,5 +53,13 @@ class EncodingTokenHandler : public BaseTokenHandler
       
 };
 
+class BBXTokenHandler : public BaseTokenHandler
+{
+    public:
+        BBXTokenHandler(BdfFontParser* owner);
+
+        void HandleToken(std::ifstream& f, std::vector<std::string>& current_line) override;
+      
+};
 
 #endif

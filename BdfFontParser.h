@@ -8,7 +8,7 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
-
+#include <list>
 
 class BaseTokenHandler;
 class BdfFont;
@@ -26,11 +26,16 @@ class BdfFontParser
         void ReinitTmpChar();
         void SetTmpCharTag(std::string tag);
         void SetTmpCharEncoding(int encoding);
+        void SetTmpCharBBX(int x,int y,int ox,int oy);
         void DumpLines(int offset,int lines_count);
+        void SetTmpCharBitmap(std::list<int>& bitmap);
+        void InvokeEndCharHandler(std::ifstream& f, std::vector<std::string>& current_line);
         std::vector<std::string> Split(std::string& str,char stoken);
 
     private:
     void ParseFont();
+    void Init();
+    
 
     BdfFont* m_owner = nullptr;
     BdfChar* m_tmp_char = nullptr;
