@@ -89,9 +89,11 @@ std::vector<std::string> Split(std::string& str,char stoken)
     if(!f.is_open()) 
         throw std::runtime_error("File is not opened!");
 
+
             
             std::string line;
             BdfChar tmp_char;
+            ParseFontSection(f,line);
             while(std::getline(f,line)){
                 //m_file_lines.push_back(line);
                 std::vector<std::string> split = Split(line,' ');
@@ -133,6 +135,10 @@ std::vector<std::string> Split(std::string& str,char stoken)
                 
     }
 
+    void ParseFontSection(std::ifstream& f,std::string& line)
+    {
+        
+    }
     
 
     std::string m_family_name;
