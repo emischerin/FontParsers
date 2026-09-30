@@ -23,7 +23,7 @@ class BdfFont
     
 
 
-    void BdfFont::DumpFont()
+    void DumpFont()
     {
         std::cout << "FONT SUMMARY\n";
         std::cout << m_chars.size() << std::endl;
@@ -55,15 +55,17 @@ std::vector<std::string> Split(std::string& str,char stoken)
   std::list<char> current;
   for(int i = 0; i < str.size();++i){
         
-    if(str[i] == stoken || str[i] == '\n' ){
+    if(str[i] == stoken || str[i] == '\n' || str[i] == '\0' ){
       
       if(current.size() > 0){
         std::string res_str(current.begin(),current.end());
         result.push_back(res_str);
         current.clear();
+        std::cout << "DETACHED LIST:" << res_str << std::endl;
       }
       
     }else{
+      std::cout << "PUSHING TOKEN:" << str[i] << std::endl;  
       current.push_back(str[i]);
       
     }
@@ -89,7 +91,7 @@ std::vector<std::string> Split(std::string& str,char stoken)
                 //m_file_lines.push_back(line);
                 std::vector<std::string> split = Split(line,' ');
                 if(split.size() < 1) continue;
-
+                std::cout << split[0] << " " << split.size() << std::endl;
                 std::string current_token = split[0];
 
                 if(current_token == "STARTCHAR"){
@@ -107,6 +109,7 @@ std::vector<std::string> Split(std::string& str,char stoken)
                         std::getline(f,line);
                         if(line == "ENDCHAR"){
                             this->m_chars[tmp_char.m_encoding] = tmp_char;
+                            tmp_char.m_bitmap.clear();
                             break;
                         }
                         tmp_char.m_bitmap.push_back(std::stoi(line));
@@ -140,8 +143,7 @@ int main()
 {
     BdfFont fnt("ter-u12b.bdf");
     fnt.DumpFont();
-    //BdfFontParser fnt("ter-u12b.bdf");
-    //fnt.DumpMode();
+    
 
     return 0;
 }
