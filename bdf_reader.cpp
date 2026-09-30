@@ -23,7 +23,28 @@ class BdfFont
     
 
 
-    void DumpFont();
+    void BdfFont::DumpFont()
+    {
+        std::cout << "FONT SUMMARY\n";
+        std::cout << m_chars.size() << std::endl;
+        for(auto i = m_chars.begin();i != m_chars.end();++i){
+            std::cout << "====CHAR======" << std::endl;
+            std::cout << i->second.m_char_tag << std::endl;
+
+            auto bmap_begin = i->second.m_bitmap.begin();
+            auto bmap_end = i->second.m_bitmap.end(); 
+
+            for(;bmap_begin != bmap_end;++bmap_begin){
+                std::cout << *bmap_begin << ' ';
+            }
+
+            std::cout << "\n";
+
+            std::cout << "====END CHAR======" << std::endl;
+
+
+        }
+    }
     
 
     private:
@@ -90,37 +111,21 @@ std::vector<std::string> Split(std::string& str,char stoken)
                         }
                         tmp_char.m_bitmap.push_back(std::stoi(line));
                     }
-                }else if(current_token == "ENDFONT"){
+                }else if(current_token == "FAMILY_NAME"){
+                    this->m_family_name = split[1];
+                }
+                else if(current_token == "ENDFONT"){
                     break;
                 }
 
             }
+
+            f.close();
             
                 
     }
 
-    void BdfFont::DumpFont()
-    {
-        std::cout << "FONT SUMMARY\n";
-        std::cout << m_chars.size() << std::endl;
-        for(auto i = m_chars.begin();i != m_chars.end();++i){
-            std::cout << "====CHAR======" << std::endl;
-            std::cout << i->second.m_char_tag << std::endl;
-
-            auto bmap_begin = i->second.m_bitmap.begin();
-            auto bmap_end = i->second.m_bitmap.end(); 
-
-            for(;bmap_begin != bmap_end;++bmap_begin){
-                std::cout << *bmap_begin << ' ';
-            }
-
-            std::cout << "\n";
-
-            std::cout << "====END CHAR======" << std::endl;
-
-
-        }
-    }
+    
 
     std::string m_family_name;
     int m_chars_count;
