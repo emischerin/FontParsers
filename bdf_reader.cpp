@@ -51,6 +51,7 @@ class BdfFont
     
 std::vector<std::string> Split(std::string& str,char stoken)
 {
+  std::cout << "SPLITTING STR:" << str << std::endl;  
   std::vector<std::string> result;
   std::list<char> current;
   for(int i = 0; i < str.size();++i){
@@ -73,6 +74,10 @@ std::vector<std::string> Split(std::string& str,char stoken)
   
     }
 //   std::cout << "SPLITTED!\n";
+     if(current.size() > 0){
+        std::string missed(current.begin(),current.end());
+        result.push_back(missed);
+     }
      return result;
     }
     
@@ -112,7 +117,7 @@ std::vector<std::string> Split(std::string& str,char stoken)
                             tmp_char.m_bitmap.clear();
                             break;
                         }
-                        tmp_char.m_bitmap.push_back(std::stoi(line));
+                        tmp_char.m_bitmap.push_back(std::stoi(line,nullptr,16));
                     }
                 }else if(current_token == "FAMILY_NAME"){
                     this->m_family_name = split[1];
