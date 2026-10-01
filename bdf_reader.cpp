@@ -21,7 +21,17 @@ class BdfFont
         this->ParseFont();
     }
     
+    /*Chars count read from font header in CHARS field*/
+    int GetCharsCount()
+    {
+        return this->m_chars_count;
+    }
 
+    /*Chars count ACTUALLY read from chars section*/
+    int GetReadCharsCount()
+    {
+        return this->m_chars.size();
+    }
 
     void DumpFont()
     {
@@ -121,10 +131,7 @@ std::vector<std::string> Split(std::string& str,char stoken)
                         }
                         tmp_char.m_bitmap.push_back(std::stoi(line,nullptr,16));
                     }
-                }else if(current_token == "FAMILY_NAME"){
-                    this->m_family_name = split[1];
-                }
-                else if(current_token == "ENDFONT"){
+                }else if(current_token == "ENDFONT"){
                     break;
                 }
 
@@ -137,11 +144,34 @@ std::vector<std::string> Split(std::string& str,char stoken)
 
     void ParseFontSection(std::ifstream& f,std::string& line)
     {
-        
+            for(;;){
+                std::getline(f,line);
+                std::vector<std::string> split = Split(line,' ');
+                if(split[0] == "FAMILY_NAME"){
+                    this->m_family_name = split[1];
+                }else if(split[0] == "FONTBOUNDINGBOX"){
+                    this->m_bbox_x = std::stoi(split[1]);
+                    this->m_bbox_y = std::stoi(split[2]);
+                    this->m_bbox_offset_x = std::stoi(split[3]);
+                    this->m_bbox_offset_x = std::stoi(split[4]);
+                }else if(split[0] == "FAMILY_NAME"){
+                    this->m_family_name =split[1];
+                }else if(split[0] == "WEIGHT_NAME"){
+                    this->m_weight_name = split[1];
+                }else if(split[0] == "CHARS"){
+                    this->m_chars_count = std::stoi(split[1],0,10);
+                    break;
+                }
+
+            }
+            
+
+            
     }
     
 
     std::string m_family_name;
+    std::string m_weight_name;
     int m_chars_count;
     int m_bbox_x,m_bbox_y,m_bbox_offset_x,m_bbox_offset_y;
     std::string m_file_path;
@@ -155,6 +185,8 @@ int main()
     BdfFont fnt("ter-u12b.bdf");
     fnt.DumpFont();
     
+    std::cout << fnt.GetCharsCount() << std::endl;
+    std::cout << fnt.GetReadCharsCount() << std::endl;
 
     return 0;
 }
