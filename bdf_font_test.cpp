@@ -44,7 +44,7 @@ void PushCharToDrawingPipeline(sf::Event& e)
     sf::Uint32 c = e.text.unicode;
     BdfChar char_ = font.GetChar(c);
     std::vector<sf::Vertex> _new_char;
-    
+    size_t bitwidth = font.GetBitmapBitWith();
 
     if(char_.empty)        
         return;
@@ -55,7 +55,7 @@ void PushCharToDrawingPipeline(sf::Event& e)
                 
         int xoff = 0;
         
-        for(int j = 7; j >= 0; --j){
+        for(int j = (bitwidth - 1); j >= 0; --j){
             sf::Vertex v;
             v.position.x = posx + xoff;
             v.position.y = posy + yoff;
@@ -73,7 +73,7 @@ void PushCharToDrawingPipeline(sf::Event& e)
                 
     }
 
-    posx += next_char_step;
+    posx += (font.GetBoundingBoxWidth() + 1);
     text.push_back(_new_char);
     
 

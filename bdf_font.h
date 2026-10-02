@@ -29,6 +29,11 @@ class BdfFont
         return this->m_chars_count;
     }
 
+    int GetBoundingBoxWidth()
+    {
+        return m_bbox_x;
+    }
+
     /*Chars count ACTUALLY read from chars section*/
     int GetReadCharsCount()
     {
@@ -46,6 +51,11 @@ class BdfFont
         }
 
         return f->second;
+    }
+
+    size_t GetBitmapBitWith()
+    {
+        return m_bitmap_bitwidth;
     }
 
     void DumpFont()
