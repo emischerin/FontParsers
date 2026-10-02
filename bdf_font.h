@@ -144,6 +144,7 @@ std::vector<std::string> Split(std::string& str,char stoken)
                             tmp_char.m_bitmap.clear();
                             break;
                         }
+                        m_bitmap_bitwidth = (line.size() > 2) ? 16 : 8; 
                         tmp_char.m_bitmap.push_back(std::stoi(line,nullptr,16));
                     }
                 }else if(current_token == "ENDFONT"){
@@ -189,6 +190,8 @@ std::vector<std::string> Split(std::string& str,char stoken)
     std::string m_weight_name;
     int m_chars_count;
     int m_bbox_x,m_bbox_y,m_bbox_offset_x,m_bbox_offset_y;
+    int dwidth_x,dwidth_y;
+    size_t m_bitmap_bitwidth = 8; /* Default is 8. Can be 8 or 16*/
     std::string m_file_path;
     std::map<int,BdfChar> m_chars;
 
