@@ -5,7 +5,8 @@
 
 
 //BdfFont font("ter-u12b.bdf");
-BdfFont font("ter-u22b.bdf");
+//BdfFont font("ter-u22b.bdf");
+BdfFont font("ter-u32n.bdf");
 sf::RenderWindow w(sf::VideoMode({800,600}),"BDF FONT TEST");
 
 std::list<std::vector<sf::Vertex>> text;
@@ -33,6 +34,14 @@ void ProcessKeyboardEvent(sf::Event& e)
         init_ly += (font.GetBoundingBoxHeight() + 1);
         posx = init_lx;
         posy = init_ly;
+    }else if (e.key.code == sf::Keyboard::BackSpace){
+        std::cout << "START BACKSPACE\n";
+        auto last_pos = text.back().begin();
+        posx = last_pos->position.x;
+        posy = last_pos->position.y;
+        std::cout << "SET NEW POSITION!\n";
+        text.pop_back();
+
     }
 
     
