@@ -4,7 +4,8 @@
 #include <SFML/Window.hpp>
 
 
-BdfFont font("ter-u12b.bdf");
+//BdfFont font("ter-u12b.bdf");
+BdfFont font("ter-u22b.bdf");
 sf::RenderWindow w(sf::VideoMode({800,600}),"BDF FONT TEST");
 
 std::list<std::vector<sf::Vertex>> text;
@@ -29,7 +30,7 @@ inline bool Bitset(unsigned int bit,int number)
 void ProcessKeyboardEvent(sf::Event& e)
 {
     if(e.key.code == sf::Keyboard::Enter){
-        init_ly += next_char_step;
+        init_ly += (font.GetBoundingBoxHeight() + 1);
         posx = init_lx;
         posy = init_ly;
     }

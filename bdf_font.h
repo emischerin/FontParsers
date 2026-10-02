@@ -29,9 +29,14 @@ class BdfFont
         return this->m_chars_count;
     }
 
-    int GetBoundingBoxWidth()
+    int GetBoundingBoxWidth() const
     {
         return m_bbox_x;
+    }
+
+    int GetBoundingBoxHeight()const 
+    {
+        return m_bbox_y;
     }
 
     /*Chars count ACTUALLY read from chars section*/
