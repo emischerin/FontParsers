@@ -2,7 +2,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-
+#include <sys/time.h>
+#include <signal.h>
+#include <unistd.h>
 
 //BdfFont font("ter-u12b.bdf");
 //BdfFont font("ter-u22b.bdf");
@@ -20,6 +22,7 @@ int next_char_step = 10;
 int init_lx = 10; 
 int init_ly = 10;
 
+bool show_cursor = true;
 
 
 inline bool Bitset(unsigned int bit,int number)
@@ -71,8 +74,10 @@ void PushCharToDrawingPipeline(sf::Event& e)
             v.position.y = posy + yoff;
             
             if(Bitset(j,*i)){
-                v.color = sf::Color::Black;
+                v.color = sf::Color::Green;
                 
+            }else{
+                v.color.a = 1;
             }
 
             xoff++;
@@ -113,10 +118,7 @@ void SimpleCharDraw(sf::Event& e)
     }
 
     for(auto it = char_.m_bitmap.begin();it != char_.m_bitmap.end();++it){
-            
-            std::cout << "j loop\n";
-            
-             
+                  
 
             for(int i = 0; i < 8; ++ i){
                 for(int j = 0; j < char_.m_bitmap.size(); ++ j){
@@ -136,40 +138,71 @@ void SimpleCharDraw(sf::Event& e)
 
 }
 
-void TestOneVertexDrawing()
+void DrawCaret()
+{   
+    sf::Color c = sf::Color::Green;
+    sf::RectangleShape r;
+    r.setPosition({init_lx,init_ly});
+    r.setSize({font.GetBoundingBoxHeight(),3});
+    r.setFillColor(c);
+
+    if(show_cursor){
+        show_cursor = false;
+    }else {
+        show_cursor = true;
+        c.a = 1;
+    }
+
+    w.draw(r);
+
+
+}
+
+void timer_handler(int sig, siginfo_t *si, void *uc) {
+    DrawCaret();   
+   
+}
+
+void SetTimerForCaret()
 {
-    static int y = 10;
-    static int x = 10;
-
-    std::cout << "DP:" << " X:" << x << std::endl;
-    sf::Vertex v;
-    v.position.x = x;
-    v.position.y = y;
-    v.color = sf::Color::Black; 
-    std::vector<sf::Vertex> vec;
-
-    vec.push_back(sf::Vertex({10,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({11,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({12,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({13,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({14,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({15,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({16,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({17,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({18,y},sf::Color::Black));
-    vec.push_back(sf::Vertex({19,y},sf::Color::Black));
+    std::cout << "SETTING TIMER!\n";
+    timer_t timerid;
+    struct sigevent sevp;
+    struct itimerspec its;
+    struct sigaction sa;
     
-    w.draw(vec.data(),vec.size(),sf::PrimitiveType::LinesStrip);
+    sa.sa_flags = SA_SIGINFO | SA_RESTART;
+    sa.sa_sigaction = timer_handler;
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGRTMIN, &sa, NULL);
+    
+    sevp.sigev_notify = SIGEV_SIGNAL;
+    sevp.sigev_signo = SIGRTMIN;
+    sevp.sigev_value.sival_ptr = &timerid;
+    if (timer_create(CLOCK_MONOTONIC, &sevp, &timerid) == -1) {
+        perror("timer_create");
+        exit(EXIT_FAILURE);
+    }
+    
+    its.it_value.tv_sec = 1;
+    its.it_value.tv_nsec = 0;
+    its.it_interval.tv_sec = 1;
+    its.it_interval.tv_nsec = 0;
 
-    y++;
+    if (timer_settime(timerid, 0, &its, NULL) == -1) {
+        perror("timer_settime");
+        exit(EXIT_FAILURE);
+    }
+    
     
 }
+
 
 int main()
 {
     
     sf::Event e;
-
+    SetTimerForCaret();
     
 
     while(w.isOpen()){
@@ -191,7 +224,7 @@ int main()
         
 
         
-        w.clear(sf::Color::White);
+        w.clear(sf::Color::Black);
         DrawText();
 
         w.display();
