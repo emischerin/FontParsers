@@ -149,18 +149,22 @@ void DrawCaret()
 
     if(show_cursor){
         show_cursor = false;
+        w.draw(r);
     }else {
         show_cursor = true;
         c.a = 1;
     }
 
-    w.draw(r);
+    
 
 
 }
 
 void timer_handler(int sig, siginfo_t *si, void *uc) {
-    DrawCaret();   
+    w.clear(sf::Color::Black);
+    DrawText();
+    DrawCaret();
+    w.display();   
    
 }
 
@@ -198,12 +202,19 @@ void SetTimerForCaret()
     
 }
 
+void WindowDrawScene()
+{
+    w.clear(sf::Color::Black);
+    DrawText();
+    DrawCaret();
+    w.display();
+}
 
 int main()
 {
     
     sf::Event e;
-    //SetTimerForCaret();
+    SetTimerForCaret();
     
 
     while(w.isOpen()){
@@ -215,20 +226,19 @@ int main()
 
         if(e.type == sf::Event::KeyPressed){
             ProcessKeyboardEvent(e);
+            WindowDrawScene();
         }
 
         if(e.type == sf::Event::TextEntered){
             PushCharToDrawingPipeline(e);
+            WindowDrawScene();
             //SimpleCharDraw(e);
             //TestOneVertexDrawing();
         }
         
 
         
-        w.clear(sf::Color::Black);
-        DrawText();
-        DrawCaret();
-        w.display();
+       
 
     }
 
