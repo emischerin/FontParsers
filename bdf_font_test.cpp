@@ -38,6 +38,7 @@ void ProcessKeyboardEvent(sf::Event& e)
         posx = init_lx;
         posy = init_ly;
     }else if (e.key.code == sf::Keyboard::BackSpace){
+        if(text.size() <= 0) return;
         std::cout << "START BACKSPACE\n";
         auto last_pos = text.back().begin();
         posx = last_pos->position.x;
@@ -142,8 +143,8 @@ void DrawCaret()
 {   
     sf::Color c = sf::Color::Green;
     sf::RectangleShape r;
-    r.setPosition({init_lx,init_ly});
-    r.setSize({font.GetBoundingBoxHeight(),3});
+    r.setPosition({posx,posy});
+    r.setSize({3,font.GetBoundingBoxHeight()});
     r.setFillColor(c);
 
     if(show_cursor){
@@ -202,7 +203,7 @@ int main()
 {
     
     sf::Event e;
-    SetTimerForCaret();
+    //SetTimerForCaret();
     
 
     while(w.isOpen()){
@@ -226,7 +227,7 @@ int main()
         
         w.clear(sf::Color::Black);
         DrawText();
-
+        DrawCaret();
         w.display();
 
     }
