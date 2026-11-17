@@ -1,3 +1,6 @@
 *.bdf
 *.out
 .vscode
+glad.c
+glad.h
+khrplatform.h
