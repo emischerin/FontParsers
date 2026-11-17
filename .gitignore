@@ -4,3 +4,4 @@
 glad.c
 glad.h
 khrplatform.h
+*.exe

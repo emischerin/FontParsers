@@ -19,7 +19,10 @@ int pos_y = 10;
 int lix = 10; // line int x
 int liy = 10; //line int y
 
-using namespace std::chrono_literals;
+inline float WxToOGLX(int x,GLFWwindow* w);
+
+inline float WyToOGLY(int y,GLFWwindow* w);
+
 //  g++ *.cpp *.c -lglfw -lGL -o gl.exe
 const char* vertex_shader =
 "#version 410 core\n"
@@ -113,22 +116,23 @@ void KeyPressedCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 void WindowResizeCallback(GLFWwindow* window, int width, int height) 
 {
+    return;
     float oxr = 2.0f / (float)win_x; //old xratio
     float oyr = 2.0f / (float)win_y; // old yratio
 
     float nxr = 2.0f / (float)width;
     float nyr = 2.0f / (float)height;
 
-    float xr = nxr / oxr;
-    float yr = nyr / oyr;
-
     for(int i = 0; i < vertices.size();i += 2){
-        vertices[i] = vertices[i] * xr;
-        vertices[i+1] = vertices[i+1] * yr;
+        int px = (vertices[i] + 1) * oxr; // pixel x
+        int py = (vertices[i+1] + 1) * oyr; // pixel y
+        vertices[i] = WxToOGLX(px,window);
+        vertices[i + 1] = WyToOGLY(py,window);
     }
 
     win_x = width;
     win_y = height;
+    glViewport(0,0,width,height);
     
 }
 
@@ -270,6 +274,7 @@ int main(void)
     glfwSetKeyCallback(window, KeyPressedCallback);
     glfwSetWindowSizeCallback(window,WindowResizeCallback);
 
+    glViewport(0,0,win_x,win_y);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) // Loop while the window should not close
     {
